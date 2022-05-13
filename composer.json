@@ -1,0 +1,22 @@
+{
+    "name": "wilkques/pkce-php",
+    "description": "PKCE for PHP",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wilkques",
+            "email": "wilkques@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.0|^8.0"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Wilkques\\PKCE\\": "src/"
+        }
+    }
+}
