@@ -3,6 +3,10 @@
 [![Latest Stable Version](https://poser.pugx.org/wilkques/pkce-php/v/stable)](https://packagist.org/packages/wilkques/pkce-php)
 [![License](https://poser.pugx.org/wilkques/pkce-php/license)](https://packagist.org/packages/wilkques/pkce-php)
 
+````
+composer require wilkques/pkce-php
+````
+
 ## How to use
 ```php
 use Wilkques\PKCE\Generator;
