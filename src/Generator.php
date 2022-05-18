@@ -6,14 +6,34 @@ namespace Wilkques\PKCE;
  * @method static string codeVerifier() get code verifier
  * @method static string codeChallenge() get code challenge
  * @method static static generate() build PKCE
- * @method static array force() set access token
  */
-class Generator
+class Generator implements \JsonSerializable, \ArrayAccess
 {
-    /** @var string|null */
-    protected $codeVerifier = null;
-    /** @var string|null */
-    protected $codeChallenge = null;
+    /** @var array */
+    protected $code = [];
+
+    /**
+     * @param string $key
+     * @param string $code
+     * 
+     * @return static
+     */
+    public function setCode(string $key, string $code)
+    {
+        $this->code[$key] = $code;
+
+        return $this;
+    }
+
+    /**
+     * @param string|null $key
+     * 
+     * @return mixed
+     */
+    public function getCode(string $key = null)
+    {
+        return $key ? $this->code[$key] : $this->code;
+    }
 
     /**
      * @param int $byteLength A minimum length of 43 characters and a maximum length of 128 characters.
@@ -32,30 +52,13 @@ class Generator
     }
 
     /**
-     * @param int $byteLength A minimum length of 43 characters and a maximum length of 128 characters.
-     * 
-     * @return string
-     */
-    public function compilerForce(int $byteLength = 43)
-    {
-        $this->generate($byteLength);
-
-        return [
-            'codeVerifier'  => $this->getCodeVerifier(),
-            'codeChallenge' => $this->generateCodeChallenge(),
-        ];
-    }
-
-    /**
      * @param string $codeVerifier
      * 
      * @return static
      */
     public function setCodeVerifier(string $codeVerifier)
     {
-        $this->codeVerifier = $codeVerifier;
-
-        return $this;
+        return $this->setCode('codeVerifier', $codeVerifier);
     }
 
     /**
@@ -63,7 +66,7 @@ class Generator
      */
     public function getCodeVerifier()
     {
-        return $this->codeVerifier;
+        return $this->getCode('codeVerifier');
     }
 
     /**
@@ -91,9 +94,7 @@ class Generator
      */
     public function setCodeChallenge(string $codeChallenge)
     {
-        $this->codeChallenge = $codeChallenge;
-
-        return $this;
+        return $this->setCode('codeChallenge', $codeChallenge);
     }
 
     /**
@@ -101,7 +102,7 @@ class Generator
      */
     public function getCodeChallenge()
     {
-        return $this->codeChallenge;
+        return $this->getCode('codeChallenge');
     }
 
     /**
@@ -118,6 +119,142 @@ class Generator
                 hash('SHA256', $codeVerifier ?: $this->getCodeVerifier(), true)
             )
         )->getCodeChallenge();
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->getCode();
+    }
+
+    /**
+     * @return string
+     */
+    public function toJson()
+    {
+        return json_encode($this->toArray());
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toJson();
+    }
+
+    /**
+     * Convert the object into something JSON serializable.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Get the value for a given offset.
+     *
+     * @param  mixed  $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
+
+    /**
+     * Set the value for a given offset.
+     *
+     * @param  mixed  $offset
+     * @param  mixed  $value
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->__set($offset, $value);
+    }
+
+    /**
+     * Determine if the given attribute exists.
+     *
+     * @param  mixed  $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return !array_key_exists($offset, $this->toArray()) && !is_null($this->__get($offset));
+    }
+
+    /**
+     * Unset the value for a given offset.
+     *
+     * @param  mixed  $offset
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->toArray()[$offset]);
+    }
+
+    /**
+     * Determine if an attribute or relation exists on the model.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        return $this->offsetExists($key);
+    }
+
+    /**
+     * Unset an attribute on the model.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function __unset($key)
+    {
+        $this->offsetUnset($key);
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
+    public function __set(string $key, $value)
+    {
+        if (in_array($key, ['codeVerifier', 'codeChallenge'])) {
+            $this->code[$key] = $value;
+        } else {
+            $this->{$key} = $value;
+        }
+    }
+
+    /**
+     * @param string $key
+     * 
+     * @return mixed
+     */
+    public function __get(string $key)
+    {
+        if (in_array($key, ['codeVerifier', 'codeChallenge'])) {
+            return $this->code[$key];
+        }
+        
+        return $this->{$key};
+    }
+
+    /**
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return $this->toArray();
     }
 
     /**

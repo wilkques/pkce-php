@@ -11,10 +11,6 @@ composer require wilkques/pkce-php
 ```php
 use Wilkques\PKCE\Generator;
 
-$pkce = Generator::force(); // output ['codeVerifier' => '123', 'codeChallenge' => '456']
-
-// or
-
 $codeVerifier = Generator::codeVerifier();
 
 $codeChallenge = Generator::codeChallenge($codeVerifier);
@@ -26,6 +22,19 @@ $pkce = Generator::generate();
 $codeVerifier = $pkce->getCodeVerifier();
 
 $codeChallenge = $pkce->getCodeChallenge();
+
+// or
+
+$codeVerifier = $pkce->codeVerifier;
+
+$codeChallenge = $pkce->codeChallenge;
+
+// or
+
+$pkce->toArray() // output ['codeVerifier' => '123', 'codeChallenge' => '456']
+
+$pkce->toJson() // output {'codeVerifier' : '123', 'codeChallenge' : '456'}
+
 ```
 
 ## REFERENCE
