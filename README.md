@@ -31,9 +31,9 @@ $codeChallenge = $pkce->codeChallenge;
 
 // or
 
-$pkce->toArray() // output ['codeVerifier' => '123', 'codeChallenge' => '456']
+$pkce->toArray(); // output ['codeVerifier' => '123', 'codeChallenge' => '456']
 
-$pkce->toJson() // output {'codeVerifier' : '123', 'codeChallenge' : '456'}
+$pkce->toJson(); // output {'codeVerifier' : '123', 'codeChallenge' : '456'}
 
 ```
 
