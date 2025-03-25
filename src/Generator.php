@@ -2,6 +2,8 @@
 
 namespace Wilkques\PKCE;
 
+use Wilkques\Helpers\Arrays;
+
 /**
  * @method static string codeVerifier() get code verifier
  * @method static string codeChallenge() get code challenge
@@ -20,19 +22,19 @@ class Generator implements \JsonSerializable, \ArrayAccess
      */
     public function setCode(string $key, string $code)
     {
-        $this->code[$key] = $code;
+        Arrays::set($this->code, $key, $code);
 
         return $this;
     }
 
     /**
-     * @param string|null $key
+     * @param string $key
      * 
      * @return mixed
      */
-    public function getCode(string $key = null)
+    public function getCode(string $key )
     {
-        return $key ? $this->code[$key] : $this->code;
+        return Arrays::get($this->code, $key);
     }
 
     /**
@@ -112,7 +114,7 @@ class Generator implements \JsonSerializable, \ArrayAccess
      * 
      * @see https://datatracker.ietf.org/doc/html/rfc7636#section-4.2
      */
-    public function generateCodeChallenge(string $codeVerifier = null)
+    public function generateCodeChallenge(?string $codeVerifier = null)
     {
         return $this->setCodeChallenge(
             base64UrlEncode(
@@ -126,7 +128,7 @@ class Generator implements \JsonSerializable, \ArrayAccess
      */
     public function toArray()
     {
-        return $this->getCode();
+        return $this->code;
     }
 
     /**
@@ -150,7 +152,7 @@ class Generator implements \JsonSerializable, \ArrayAccess
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
@@ -161,7 +163,7 @@ class Generator implements \JsonSerializable, \ArrayAccess
      * @param  mixed  $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->__get($offset);
     }
@@ -173,7 +175,7 @@ class Generator implements \JsonSerializable, \ArrayAccess
      * @param  mixed  $value
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->__set($offset, $value);
     }
@@ -184,7 +186,7 @@ class Generator implements \JsonSerializable, \ArrayAccess
      * @param  mixed  $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return !array_key_exists($offset, $this->toArray()) && !is_null($this->__get($offset));
     }
@@ -195,7 +197,7 @@ class Generator implements \JsonSerializable, \ArrayAccess
      * @param  mixed  $offset
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->toArray()[$offset]);
     }
@@ -229,7 +231,7 @@ class Generator implements \JsonSerializable, \ArrayAccess
     public function __set(string $key, $value)
     {
         if (in_array($key, ['codeVerifier', 'codeChallenge'])) {
-            $this->code[$key] = $value;
+            Arrays::set($this->code, $key, $value);
         } else {
             $this->{$key} = $value;
         }
@@ -243,7 +245,7 @@ class Generator implements \JsonSerializable, \ArrayAccess
     public function __get(string $key)
     {
         if (in_array($key, ['codeVerifier', 'codeChallenge'])) {
-            return $this->code[$key];
+            return Arrays::get($this->code, $key);
         }
         
         return $this->{$key};

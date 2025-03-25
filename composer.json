@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "php": "^7.0|^8.0"
+        "php": "^7.0|^8.0",
+        "wilkques/php-helper": "^5.0.0"
     },
     "autoload": {
         "files": [
